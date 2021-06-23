@@ -1,7 +1,49 @@
 from tkinter import *
 import backend
 
+def get_selected_row(event):
+    try:
+        global selected_tuple
+        index = lb_output.curselection()[0]
+        selected_tuple = lb_output.get(index)
+        ent_author.delete(0, END)
+        ent_author.insert(END, selected_tuple[1])
+        ent_title.delete(0, END)
+        ent_title.insert(END, selected_tuple[2])
+        ent_year.delete(0, END)
+        ent_year.insert(END, selected_tuple[3])
+        ent_isbn.delete(0, END)
+        ent_isbn.insert(END, selected_tuple[4])
+    except IndexError:
+        pass
+
+#button commands
+def view_command():
+    lb_output.delete(0, END)
+    for row in backend.view():
+        lb_output.insert(END, row)
+
+def search_command():
+    lb_output.delete(0, END)
+    for row in backend.search(title_text.get(), author_text.get(), year_text.get(), isbn_text.get()):
+        lb_output.insert(END, row)
+
+def add_command():
+    backend.insert(title_text.get(), author_text.get(), year_text.get(), isbn_text.get())
+    lb_output.delete(0, END)
+    lb_output.insert(END, (title_text.get(), author_text.get(), year_text.get(), isbn_text.get()))
+
+def update_command():
+    backend.update(selected_tuple[0], title_text.get(), author_text.get(), year_text.get(), isbn_text.get())
+
+def delete_command():
+    backend.delete(selected_tuple[0])
+
+
+
 window = Tk()
+
+window.wm_title("BookStore")
 
 #labels
 lbl_title = Label(window, text="Title")
@@ -43,23 +85,25 @@ sb1.grid(row=2, column=2, rowspan=6)
 lb_output.configure(yscrollcommand=sb1.set)
 sb1.configure(command=lb_output.yview)
 
+lb_output.bind('<<ListboxSelect>>', get_selected_row)
+
 #buttons
-btn_view = Button(window, text="View All", width=12)
+btn_view = Button(window, text="View All", width=12, command=view_command)
 btn_view.grid(row=2, column=3)
 
-btn_search = Button(window, text="Search Entry", width=12)
+btn_search = Button(window, text="Search Entry", width=12, command=search_command)
 btn_search.grid(row=3, column=3)
 
-btn_add = Button(window, text="Add Entry", width=12)
+btn_add = Button(window, text="Add Entry", width=12, command=add_command)
 btn_add.grid(row=4, column=3)
 
-btn_update = Button(window, text="Update", width=12)
+btn_update = Button(window, text="Update", width=12, command=update_command)
 btn_update.grid(row=5, column=3)
 
-btn_delete = Button(window, text="Delete", width=12)
+btn_delete = Button(window, text="Delete", width=12, command=delete_command)
 btn_delete.grid(row=6, column=3)
 
-btn_close = Button(window, text="Close", width=12)
+btn_close = Button(window, text="Close", width=12, command=window.destroy)
 btn_close.grid(row=7, column=3)
 
 window.mainloop()
