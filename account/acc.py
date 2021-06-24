@@ -18,6 +18,10 @@ class Account:
 
 class Checking(Account):
 
+    """This class generates checking account objects."""
+    
+    type = "checking"
+
     def __init__(self, filepath, fee):
         Account.__init__(self, filepath)
         self.fee = fee
@@ -30,3 +34,4 @@ checking = Checking("account//balance.txt", 10)
 checking.transfer(100)
 print(checking.balance)
 checking.commit()
+print(checking.__doc__)
